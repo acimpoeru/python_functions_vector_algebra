@@ -6,7 +6,7 @@ def beam_configuration(input_file):
     for line in input_file:
         coordinate = line.split()
         if coordinate[0] == 'NodeNo' and coordinate[1]=='X' and coordinate[2]=='Y' and coordinate[3]=='Z':
-            print 'I cannot convert string to flots'     
+            print 'I cannot convert string to float'     
         else :
         
             beam_coordinates['y'].append(float(coordinate[2]))
@@ -33,7 +33,7 @@ def deformation_applied(input_file_2):
         displacement = line.split()
     
         if displacement[0]=='NodeNo' and displacement[1]=='dX' and displacement[2]=='dY' and displacement[3]=='dZ'  and displacement[7]=='Thx' and displacement[8]=='Thy' and displacement[9]=='Thz' :
-            print 'I cannot convert strings to floats'
+            print 'I cannot convert string to float'
         else:
             deformation_translation['dX'].append(float(displacement[1]))
             deformation_translation['dY'].append(float(displacement[2]))

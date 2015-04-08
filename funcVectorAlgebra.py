@@ -1,5 +1,6 @@
 import math 
-
+import os
+import sys
 ''' FUNCTION TO RETURN THE DISTANCE BETWEEN TWO POINTS'''
 
 def distance_points(tuple1,tuple2):
@@ -138,14 +139,6 @@ def mapping(my_list_1,my_list_2):
     return projections,nearest_points,projected_points
 
 
-'''define a translation'''
-
-def translation(my_list_2):
-    translation=[]
-    for i in range(0,len(my_list_2)):
-        translation.append((my_list_2[i][0],my_list_2[i][1]+i,my_list_2[i][2]))
-        
-    return translation
 
 '''function to return a segment between two points'''
 
@@ -164,8 +157,8 @@ def segments(segment_points):
 def project(point,segment):
     #global parameter
     paramater = ( (point[0]-segment[0][0])*(segment[1][0]-segment[0][0]) +
-                 (point[1]-segment[0][1])*(segment[1][1]-segment[0][1]) +
-                 (point[2]-segment[0][2])*(segment[1][2]-segment[0][2]) ) / ((distance_points(segment[0],segment[1]))**2.0)
+                  (point[1]-segment[0][1])*(segment[1][1]-segment[0][1]) +
+                  (point[2]-segment[0][2])*(segment[1][2]-segment[0][2]) ) / ((distance_points(segment[0],segment[1]))**2.0)
 
     #print 'I am the calculated parameter     ' , parameter
 
@@ -317,14 +310,48 @@ def add_halo(beam_segments):
 def create_surface_points(beam):
     surface_points = []
 
-    for i in range (2,9):
+    for i in range (1,len(beam)-1):
 
-        surface_points.append((beam[i][0]+0.1 ,beam[i][1]+0.5,beam[i][2]+1.0,))
+        surface_points.append((beam[i][0]+0.01 ,beam[i][1],beam[i][2]+0.5,))
 
 
     return surface_points
 
 
+def theta_nodes(theta_list_of_angles):
+    theta_segments = []
+
+    for i in range(0,len(theta_list_of_angles)-1):
+
+        theta_segments.append([theta_list_of_angles[i],theta_list_of_angles[i+1]])
+    return theta_segments
+
+
+def theta_interpolation(theta_segment,point,segment):
+
+    theta_paramater_x = (point[0]-segment[0][0])/(segment[1][0]-segment[0][0])
+    #print 'They are all equal'
+    if theta_paramater_x<0.0 :
+        #print 'The parameter is select the left node' ,theta_paramater_x
+        theta_interp = theta_segment[0]
+        return theta_interp
+
+    elif theta_paramater_x>1.0 :  
+            #print 'The parameter is , selenct the right node' ,theta_paramater_x
+            theta_interp = theta_segment[1]
+            return theta_interp
+
+    else:
+
+        #print 'between the end points of the segment',paramater
+            #print 'The parameter is ' ,theta_paramater_x
+        theta_interp = (1.0 - theta_paramater_x) * theta_segment[0] + theta_paramater_x * theta_segment[1]
+        
+        return theta_interp      
+        
+
+
+'''  work out the translation at the halo cells. Assume as an average'''
 
 
 
@@ -333,6 +360,44 @@ def create_surface_points(beam):
 
 
 
+
+
+'''
+
+
+theta=deg2rad(180)
+
+#point_to_be_rotated = (1.5,4.0,0.0)
+
+#origin_of_the_system = (0.0,0.0,0.0)
+
+#axis_rotation = [1.5,0.0,0.0]
+
+
+surf_points = (2.0, 4.0, 0.0)
+two_points = [(1.0, 1.0,0.0),(5.0, 5.0,0.0)]
+
+point_to_be_rotated=surf_points
+
+pr_point = funcVectorAlgebra.project(surf_points,two_points)
+
+print pr_point
+
+
+origin_of_the_system=pr_point
+#origin_of_the_system = (0.0,0.0,0.0)
+
+#axis_rotation=[0.0,1.0,0.0]    
+axis_rotation = (pr_point[0],0.0,0.0)
+#axis_rotation = pr_point
+
+    #axis_rotation=[1.0,0.0,0.0]
+    #origin_of_the_system=projected_points[ind]
+rotated_point = funcVectorAlgebra.pointRotate3D(origin_of_the_system,axis_rotation,point_to_be_rotated,theta)
+
+print rotated_point    
+
+'''
 
 
 
